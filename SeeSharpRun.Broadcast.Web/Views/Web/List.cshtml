@@ -1,0 +1,37 @@
+﻿@model IEnumerable<SeeSharpRun.Broadcast.Models.Broadcast>
+
+<div class="list-group">
+    @foreach (var broadcast in Model)
+    {
+        DateTime liveLocalStartTime = broadcast.LiveDateTime.ToLocalTime().DateTime;
+        DateTime liveLocalEndTime = liveLocalStartTime.Add(broadcast.Duration);
+        
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    @broadcast.Title
+                </h5>
+                <small>
+                    <em>@(liveLocalStartTime.ToString("dddd, MMMM d h:mm -") + liveLocalEndTime.ToString(" h:mm tt"))</em>
+                </small>
+            </div>
+            <span class="btn-group my-2" role="group">
+                @Html.ActionLink("Join", "Link", new { slug = broadcast.SemanticUrl.ToString() }, new { @class = "btn btn-primary text-white", target="_blank" })
+                @if (!String.IsNullOrEmpty(broadcast.VideoDownloadUrl))
+                {
+                    @Html.ActionLink("Download Video", "Download", new { slug = broadcast.SemanticUrl.ToString() }, new { @class = "btn btn-primary text-white", target = "_blank" })
+                }
+            </span>
+            <div class="mt-1">
+                @Html.TransformMarkdown(broadcast.Description)
+                <p>
+                    <small>
+                        <strong>Duration:</strong> @broadcast.Duration.Humanize()
+                        <br />
+                        <em>@liveLocalStartTime.Humanize()</em>
+                    </small>
+                </p>
+            </div>
+        </div>
+    }
+</div>
